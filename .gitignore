@@ -1,0 +1,6 @@
+build/
+
+external/raylib/src/libraylib.a
+external/raylib/src/*.o
+
+**/*.d
