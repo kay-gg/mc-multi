@@ -4,9 +4,8 @@
 
 using namespace std;
 
-// TODO
-World::World(int numThreads, GenType genType) : pool(numThreads) {
-	
+
+World::World(int numThreads, std::unique_ptr<ChunkGenerator> generator) : pool(numThreads), gen(std::move(generator)) {
 }
 // TODO
 Chunk* World::getChunk(int x, int z) {

@@ -48,7 +48,7 @@ enum GenType {
 
 class World {
 public:
-	World(int numThreads, GenType genType);
+	World(int numThreads, std::unique_ptr<ChunkGenerator> generator);
 	
 	Chunk* getChunk(int x, int z);
 
