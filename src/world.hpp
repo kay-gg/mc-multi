@@ -17,8 +17,8 @@ class ChunkHolder {
 public:
 	ChunkHolder();
 
-	Chunk* getChunk(int chunk_x, int chunk_z);
-	void insertChunk(std::unique_ptr<Chunk> chunk);
+	Chunk* getChunk(ChunkCord cord);
+	void insertChunk(ChunkCord cord, std::unique_ptr<Chunk> chunk);
 private:
 	std::unordered_map<ChunkCord, std::unique_ptr<Chunk>> chunks;
 };
@@ -50,8 +50,7 @@ class World {
 public:
 	World(int numThreads, std::unique_ptr<ChunkGenerator> generator);
 	
-	Chunk* getChunk(int x, int z);
-
+	void genChunk(ChunkCord cord);
 private:
 	ChunkHolder chunks;
 	ThreadPool pool;
