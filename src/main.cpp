@@ -19,12 +19,14 @@ void test_raylib() {
 void report_stuff() {
 	// Make 2 worlds
 	// TODO
-	int max_threads; // Get the max threads on the PC
+	int max_threads = 8; // Get the max threads on the PC
 
-	World* world_slow = new World(max_threads, SLOW);
-	World* world_fast = new World(max_threads, FAST);
+	World* world_fast = new World(max_threads, std::make_unique<FlatWorldGen>());
+	World* world_slow = new World(max_threads, std::make_unique<FlatWorldGenSequential>());
 
 	// Generate enough chunks for spawn (like mc does)
+	world_slow->genChunk(ChunkCord {0, 0});
+	
 	// Time those chunk generation times. (like 5 times so we can get an average)
 	// Put times into a file
 	// Run python program to graph the times in the file? 
@@ -39,7 +41,7 @@ void visual() {
 }
 
 int main() {
-	test_raylib();
+	//test_raylib();
 
 	report_stuff();
 	visual();
