@@ -69,14 +69,16 @@ std::vector<Chunk*> ChunkHolder::getChunks() {
 void ChunkHolder::insertChunk(ChunkCord cord,  unique_ptr<Chunk> chunk) {
 	chunks.insert({cord, std::move(chunk)});
 }
+
 ThreadPool::ThreadPool(size_t numThreads) {
     for (size_t i = 0; i < numThreads; i++) {
         workers.emplace_back([this]() {
             while (true) {
                 std::function<void()> task;
+
                 {
                     std::unique_lock<std::mutex> lock(queueMutex);
-                    // sleep until theres a task or stop
+
                     cv.wait(lock, [this]() {
                         return stop || !taskQueue.empty();
                     });
@@ -85,8 +87,19 @@ ThreadPool::ThreadPool(size_t numThreads) {
 
                     task = std::move(taskQueue.front());
                     taskQueue.pop();
+                    activeTasks++;
                 }
-                task(); 
+
+                task();
+
+                {
+                    std::unique_lock<std::mutex> lock(queueMutex);
+                    activeTasks--;
+
+                    if (taskQueue.empty() && activeTasks == 0) {
+                        finishedCv.notify_all();
+                    }
+                }
             }
         });
     }
@@ -109,4 +122,16 @@ void ThreadPool::enqueue(std::function<void()> task) {
         taskQueue.push(std::move(task));
     }
     cv.notify_one();
+}
+
+void ThreadPool::waitUntilIdle() {
+    std::unique_lock<std::mutex> lock(queueMutex);
+
+    finishedCv.wait(lock, [this]() {
+        return taskQueue.empty() && activeTasks == 0;
+    });
+}
+
+void World::waitForAllChunks() {
+    pool.waitUntilIdle();
 }
