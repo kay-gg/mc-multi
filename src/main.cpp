@@ -3,6 +3,8 @@
 #include "chunk.hpp"
 #include "gen.hpp"
 #include "visuals.hpp"
+#include "timing.hpp"
+#include <string>
 
 void test_raylib() {
 	InitWindow(1280, 720, "World Gen");
@@ -52,7 +54,11 @@ void debugging() {
 	world_debug->debugChunk(ChunkCord {0, 0});
 }
 
-int main() {
+	int main(int argc, char* argv[]) {
+    if (argc > 1 && std::string(argv[1]) == "timing") {
+        runTimingReport();
+        return 0;
+    }
 	//test_raylib();
 	report_stuff();
 	//debugging();

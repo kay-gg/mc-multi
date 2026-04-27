@@ -32,12 +32,16 @@ public:
     std::queue<std::function<void()>> taskQueue;
     std::mutex queueMutex;
     std::condition_variable cv;
+	std::condition_variable finishedCv;
+	size_t activeTasks = 0;
     bool stop = false;
 
 	ThreadPool(size_t numThreads);
 	~ThreadPool(); // joins all workers
 
 	void enqueue(std::function<void()> task);
+
+	void waitUntilIdle();
 
 private:
 
@@ -54,6 +58,7 @@ public:
 	World(int numThreads, std::unique_ptr<ChunkGenerator> generator);
 	
 	void genChunk(ChunkCord cord);
+	void waitForAllChunks();
 	void debugChunk(ChunkCord cord);
 	std::vector<Chunk*> getAllChunks();
 private:
