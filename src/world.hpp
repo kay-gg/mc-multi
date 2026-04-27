@@ -1,6 +1,7 @@
 #pragma once
 
 #include<gen.hpp>
+#include<chunk.hpp>
 
 #include<memory>
 #include<unordered_map>
@@ -10,6 +11,7 @@
 #include<condition_variable>
 #include<thread>
 #include<functional>
+#include<iostream>
 
 
 
@@ -18,6 +20,7 @@ public:
 	ChunkHolder();
 
 	Chunk* getChunk(ChunkCord cord);
+	std::vector<Chunk*> getChunks();
 	void insertChunk(ChunkCord cord, std::unique_ptr<Chunk> chunk);
 private:
 	std::unordered_map<ChunkCord, std::unique_ptr<Chunk>> chunks;
@@ -51,6 +54,8 @@ public:
 	World(int numThreads, std::unique_ptr<ChunkGenerator> generator);
 	
 	void genChunk(ChunkCord cord);
+	void debugChunk(ChunkCord cord);
+	std::vector<Chunk*> getAllChunks();
 private:
 	ChunkHolder chunks;
 	ThreadPool pool;

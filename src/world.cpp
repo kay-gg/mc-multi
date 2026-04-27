@@ -21,8 +21,29 @@ void World::genChunk(ChunkCord cord) {
 	pool.enqueue([this, ptr]() {
 		gen->generate(*ptr);
 		ptr->state = ChunkState::DONE;
-	});
-	
+	});	
+}
+
+std::vector<Chunk*> World::getAllChunks() {
+    return chunks.getChunks(); 
+}
+
+void World::debugChunk(ChunkCord cord) {
+	Chunk* c = chunks.getChunk(cord);
+    if (!c) {
+        cout << "Chunk not found at " << cord.x_pos << ", " << cord.z_pos << endl;
+        return;
+    }
+
+	while (c->state != DONE) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    for (int x = 0; x < Chunk::SIZE_X; x++)
+    //for (int y = 0; y < Chunk::SIZE_Y; y++)
+    for (int z = 0; z < Chunk::SIZE_Z; z++) {
+        cout << "(" << x << "," << 0 << "," << z << ") = " 
+            << c->block_arr[x][0][z].type << "\n";
+    }
 }
 
 ChunkHolder::ChunkHolder() {
@@ -30,7 +51,19 @@ ChunkHolder::ChunkHolder() {
 }
 
 Chunk* ChunkHolder::getChunk(ChunkCord cord) {
-	return chunks.at(cord).get();
+    auto it = chunks.find(cord);
+    if (it == chunks.end()) {
+        return nullptr;
+    }
+    return it->second.get();
+}
+
+std::vector<Chunk*> ChunkHolder::getChunks() {
+	std::vector<Chunk*> result;
+    for (auto& pair : chunks) {
+        result.push_back(pair.second.get());
+    }
+    return result;
 }
 
 void ChunkHolder::insertChunk(ChunkCord cord,  unique_ptr<Chunk> chunk) {

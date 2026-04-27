@@ -1,6 +1,6 @@
 # ─── Compiler & Flags ────────────────────────────────────────────────────────
 CXX      := g++
-CXXFLAGS := -std=c++17 -Wall -Wextra -O2
+CXXFLAGS := -std=c++17 -Wall -Wextra -O2 -fopenmp
 
 # ─── Directories ─────────────────────────────────────────────────────────────
 SRC_DIR    := src
@@ -27,15 +27,15 @@ RAYLIB_LIB := $(RAYLIB_DIR)/libraylib.a
 UNAME := $(shell uname)
 
 ifeq ($(UNAME), Linux)
-    LDFLAGS := -L$(RAYLIB_DIR) -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+    LDFLAGS := -L$(RAYLIB_DIR) -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -fopenmp
 endif
 ifeq ($(UNAME), Darwin)
     LDFLAGS := -L$(RAYLIB_DIR) -lraylib -framework OpenGL -framework Cocoa \
-               -framework IOKit -framework CoreAudio -framework CoreVideo
+               -framework IOKit -framework CoreAudio -framework CoreVideo -fopenmp
 endif
 # Windows (under MinGW):
 ifeq ($(OS), Windows_NT)
-    LDFLAGS := -L$(RAYLIB_DIR) -lraylib -lopengl32 -lgdi32 -lwinmm
+    LDFLAGS := -L$(RAYLIB_DIR) -lraylib -lopengl32 -lgdi32 -lwinmm -fopenmp
 endif
 
 # ─── Dependency Tracking ─────────────────────────────────────────────────────

@@ -1,0 +1,1 @@
+void visuals(World* world);

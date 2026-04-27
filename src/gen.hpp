@@ -1,6 +1,7 @@
 #pragma once
 
 #include "chunk.hpp"
+#include<iostream>
 
 class ChunkGenerator {
 public:
@@ -15,6 +16,11 @@ public:
 };
 
 class FlatWorldGenSequential : public ChunkGenerator {
+public:
+	void generate(Chunk& chunk) override;
+};
+
+class FlatWorldGenDebug : public ChunkGenerator {
 public:
 	void generate(Chunk& chunk) override;
 };

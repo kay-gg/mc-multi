@@ -2,6 +2,7 @@
 #include "world.hpp"
 #include "chunk.hpp"
 #include "gen.hpp"
+#include "visuals.hpp"
 
 void test_raylib() {
 	InitWindow(1280, 720, "World Gen");
@@ -18,31 +19,48 @@ void test_raylib() {
 
 void report_stuff() {
 	// Make 2 worlds
-	// TODO
-	int max_threads = 8; // Get the max threads on the PC
+	int max_threads = std::thread::hardware_concurrency();; // Get the max threads on the PC
+    std::cout << "Using " << max_threads << " threads" << std::endl;
 
 	World* world_fast = new World(max_threads, std::make_unique<FlatWorldGen>());
 	World* world_slow = new World(max_threads, std::make_unique<FlatWorldGenSequential>());
 
 	// Generate enough chunks for spawn (like mc does)
-	world_slow->genChunk(ChunkCord {0, 0});
-	
+	// 19x19 is the spawn area
+	for (int i = 0; i < 19; i++)
+	for (int j = 0; j < 19; j++)
+	{
+		world_fast->genChunk(ChunkCord {i, j});
+	}
+
 	// Time those chunk generation times. (like 5 times so we can get an average)
+
 	// Put times into a file
+
 	// Run python program to graph the times in the file? 
 
-	
 }
+void debugging() {
+	int max_threads = std::thread::hardware_concurrency();; // Get the max threads on the PC
+    std::cout << "Using " << max_threads << " threads" << std::endl;
 
-void visual() {
-	// all the stuff with raylib.
+	// World* world_fast = new World(max_threads, std::make_unique<FlatWorldGen>());
+	// World* world_slow = new World(max_threads, std::make_unique<FlatWorldGenSequential>());
+	World* world_debug = new World(max_threads, std::make_unique<FlatWorldGenDebug>());
 
-
+	world_debug->genChunk(ChunkCord {0, 0});
+	world_debug->debugChunk(ChunkCord {0, 0});
 }
 
 int main() {
 	//test_raylib();
-
 	report_stuff();
-	visual();
+	//debugging();
+	int max_threads = std::thread::hardware_concurrency();; // Get the max threads on the PC
+	World* world_slow = new World(max_threads, std::make_unique<FlatWorldGen>());
+	world_slow->genChunk(ChunkCord {0, 0});
+	world_slow->genChunk(ChunkCord {0, 1});
+	world_slow->genChunk(ChunkCord {1, 0});
+	world_slow->genChunk(ChunkCord {1, 1});
+	//visuals(world_slow);
 }
